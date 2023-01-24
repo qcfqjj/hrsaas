@@ -1,5 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/auth.js'
-import { login, getUserInfo } from '@/api/user'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 
 const state = {
   token: getToken(),
@@ -36,7 +36,8 @@ const actions = {
   },
   async getUserInfo(context) {
     const result = await getUserInfo()
-    context.commit('setUserInfo', result)
+    const baseInfo = await getUserDetailById(result.userId)
+    context.commit('setUserInfo', { ...result, ...baseInfo })
     return result
   }
 }

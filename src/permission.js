@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css' // 引入进度条样式
 
 // 路由前置守卫
 const whiteList = ['/login', '/404']
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start() // 开启进度条
   // 是否有token
   if (store.getters.token) {
@@ -13,6 +13,11 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next('/')
     } else {
+      if (!store.getters.userId) {
+        // 如果没有id这个值 才会调用 vuex的获取资料的action
+        await store.dispatch('user/getUserInfo')
+        // 为什么要写await 因为我们想获取完资料再去放行
+      }
       next() // 放行
     }
     // 如果没有token
