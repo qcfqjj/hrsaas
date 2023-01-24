@@ -1,7 +1,9 @@
 import { getToken, setToken, removeToken } from '@/utils/auth.js'
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
+
 const state = {
-  token: getToken()
+  token: getToken(),
+  userInfo: {}
 }
 
 const mutations = {
@@ -12,6 +14,13 @@ const mutations = {
   removeToken(state) {
     state.token = null
     removeToken()
+  }, // 设置用户信息
+  setUserInfo(state, userInfo) {
+    state.userInfo = { ...userInfo } // 用 浅拷贝的方式去赋值对象 因为这样数据更新之后，才会触发组件的更新
+  },
+  // 删除用户信息
+  reomveUserInfo(state) {
+    state.userInfo = {}
   }
 }
 
@@ -24,6 +33,11 @@ const actions = {
     // 现在有用户token
     // actions 修改state 必须通过mutations
     context.commit('setToken', result)
+  },
+  async getUserInfo(context) {
+    const result = await getUserInfo()
+    context.commit('setUserInfo', result)
+    return result
   }
 }
 
